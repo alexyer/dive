@@ -1,5 +1,8 @@
 #include <iostream>
+#include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include "include/config.h"
+#include "include/dive.h"
 
 namespace po = boost::program_options;
 
@@ -23,7 +26,10 @@ int main(int argc, char* argv[]) {
     }
 
     po::notify(vm);
+    boost::asio::io_service io_service;
 
-    std::cout << host << ":" << std::to_string(port) << std::endl;
+    dive::config config(host, port);
+    dive::Dive dive(config, io_service);
+
     return 0;
 }
