@@ -31,5 +31,7 @@ int main(int argc, char* argv[]) {
     dive::config config(host, port);
     dive::Dive dive(config, io_service);
 
+    io_service.run();
+
     return 0;
 }
