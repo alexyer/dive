@@ -6,6 +6,7 @@ message DiveMessage {
     required uint32 port = 3;
 
     enum MessageType {
+        UNKNOWN = 0;
         ALIVE = 1;
     }
 
