@@ -1,7 +1,13 @@
 package dive;
 
-message Alive {
+message DiveMessage {
     required uint32 version = 1; // Protocol version
     required uint32 ip = 2;
     required uint32 port = 3;
+
+    enum MessageType {
+        ALIVE = 1;
+    }
+
+    required MessageType messageType = 4;
 }
