@@ -56,8 +56,7 @@ int main(int argc, char *argv[]) {
 
     if (command == "agent") {
         dive::config config(host, port);
-        dive::Dive dive(config, io_service);
-
+        auto dive = dive::Dive::agent(config, io_service);
         io_service.run();
     } else if (command == "join") {
         std::cout << "rpc-addr" << vm["rpc-addr"].as<std::string>();

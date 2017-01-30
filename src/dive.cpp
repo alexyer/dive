@@ -4,6 +4,9 @@
 #include <iostream>
 #include "../include/dive.h"
 
+dive::Dive dive::Dive::agent(const dive::config &conf, boost::asio::io_service &io_service) {
+    return dive::Dive(conf, io_service);
+}
 
 dive::Dive::Dive(const dive::config &conf, boost::asio::io_service &io_service)
         : config_(conf), socket_(io_service, udp::endpoint(udp::v4(), conf.port)) {

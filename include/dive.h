@@ -9,9 +9,15 @@ using boost::asio::ip::udp;
 namespace dive {
     class Dive {
     public:
-        Dive(const dive::config&, boost::asio::io_service&);
         const dive::config& getConfig() const;
+
+        /***
+         * Create agent instance.
+         * @return new Dive instance.
+         */
+        static Dive agent(const dive::config&, boost::asio::io_service&);
     private:
+        Dive(const dive::config&, boost::asio::io_service&);
         void start_receive();
         void handle_receive(const boost::system::error_code&, std::size_t);
 
