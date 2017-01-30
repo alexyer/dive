@@ -10,6 +10,7 @@ namespace dive {
     class Dive {
     public:
         Dive(const dive::config&, boost::asio::io_service&);
+        const dive::config& getConfig() const;
     private:
         void start_receive();
         void handle_receive(const boost::system::error_code&, std::size_t);

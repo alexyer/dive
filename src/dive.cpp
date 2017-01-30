@@ -27,3 +27,7 @@ void dive::Dive::handle_receive(const boost::system::error_code& error_code, std
     }
     start_receive();
 }
+
+const dive::config& dive::Dive::getConfig() const {
+    return config_;
+}

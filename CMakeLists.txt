@@ -15,3 +15,5 @@ if (Boost_FOUND)
     add_executable(dive ${SOURCE_FILES})
     target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 endif ()
+
+add_subdirectory(tests)
