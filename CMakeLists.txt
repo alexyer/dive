@@ -3,9 +3,10 @@ project(dive)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Boost 1.63.0 COMPONENTS program_options system log REQUIRED)
+find_package(Boost 1.58.0 COMPONENTS program_options system log REQUIRED)
 
 set(SOURCE_FILES main.cpp src/dive.cpp)
+set(CMAKE_CXX_FLAGS "-pthread")
 
 if (Boost_FOUND)
     add_definitions(-DBOOST_LOG_DYN_LINK)
