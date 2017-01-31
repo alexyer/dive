@@ -9,6 +9,9 @@ using boost::asio::ip::udp;
 namespace dive {
     class Dive {
     public:
+        static const std::string VERSION;
+        static const unsigned short PROTOCOL_VERSION;
+
         const dive::config& getConfig() const;
 
         /***

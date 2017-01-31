@@ -4,6 +4,9 @@
 #include <iostream>
 #include "../include/dive.h"
 
+const std::string dive::Dive::VERSION = "0.0.1";
+const unsigned short dive::Dive::PROTOCOL_VERSION = 1;
+
 dive::Dive dive::Dive::agent(const dive::config &conf, boost::asio::io_service &io_service) {
     return dive::Dive(conf, io_service);
 }
