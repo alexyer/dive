@@ -10,17 +10,26 @@ namespace dive {
         std::string host;
         unsigned short port;
 
-        unsigned int probe_interval;   // Interval between probes in milliseconds.
+        /// Interval between probes in milliseconds.
+        unsigned int probe_interval;
 
-        config(std::string host, unsigned short port, unsigned int probe_interval_ = 200)
-                : host(host), port(port), probe_interval(probe_interval_) {
+        /// Retransmit multiplier for the number of retransmissions are attempted for messages broadcast
+        /// over gossips.
+        unsigned int retransmit_multiplier;
+
+        config(std::string host, unsigned short port, unsigned int probe_interval_ = 200,
+               unsigned int retransmit_multiplier_ = 2)
+                : host(host), port(port), probe_interval(probe_interval_),
+                  retransmit_multiplier(retransmit_multiplier_) {
             std::stringstream ss;
             ss << host << ":" << port;
             name = ss.str();
         };
 
-        config(std::string host, unsigned short port, std::string name, unsigned int probe_interval_ = 200)
-                : host(host), port(port), name(name), probe_interval(probe_interval_) {}
+        config(std::string host, unsigned short port, std::string name, unsigned int probe_interval_ = 200,
+               unsigned int retransmit_multiplier_ = 2)
+                : host(host), port(port), name(name), probe_interval(probe_interval_),
+                  retransmit_multiplier(retransmit_multiplier_) {}
     };
 }
 
