@@ -1,14 +1,27 @@
 package dive;
 
+enum MessageType {
+    PING = 0;
+    PING_REQ = 1;
+    ACK = 2;
+}
+
+enum GossipType {
+    ALIVE = 0;
+}
+
+message Member {
+    required uint32 ip = 1;
+    required uint32 port = 2;
+}
+
+message Gossip {
+    required GossipType gossip_type = 1;
+    required Member member = 2;
+}
+
 message DiveMessage {
     required uint32 version = 1; // Protocol version
-    required uint32 ip = 2;
-    required uint32 port = 3;
-
-    enum MessageType {
-        UNKNOWN = 0;
-        ALIVE = 1;
-    }
-
-    required MessageType messageType = 4;
+    required MessageType message_type = 2;
+    repeated Gossip gossips = 3;
 }
