@@ -24,7 +24,9 @@ namespace dive {
         Dive(const dive::config&, boost::asio::io_service&);
         void start_receive();
         void handle_receive(const boost::system::error_code&, std::size_t);
-        void start_gossiping();
+        void start_gossiping(boost::asio::io_service&);
+        void handle_gossip();
+        void restart_gossip_timer();
 
         dive::config config_;
         udp::socket socket_;

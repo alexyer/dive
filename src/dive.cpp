@@ -15,11 +15,11 @@ dive::Dive dive::Dive::agent(const dive::config &conf, io_service &io_service) {
 }
 
 dive::Dive::Dive(const dive::config &conf, io_service &io_service)
-        : config_(conf), socket_(io_service, udp::endpoint(udp::v4(), conf.port)),
-          gossip_timer_(std::make_shared<deadline_timer>(io_service, milliseconds(conf.gossip_interval))) {
+        : config_(conf), socket_(io_service, udp::endpoint(udp::v4(), conf.port)) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << socket_.local_endpoint().address().to_string() << ":"
-                            << socket_.local_endpoint().port();
+                            << socket_.local_endpoint().port() << std::endl;
     start_receive();
+    start_gossiping(io_service);
 }
 
 void dive::Dive::start_receive() {
@@ -38,8 +38,20 @@ void dive::Dive::handle_receive(const boost::system::error_code &error_code, std
     start_receive();
 }
 
-void dive::Dive::start_gossiping() {
+void dive::Dive::start_gossiping(boost::asio::io_service& io_service_) {
+    BOOST_LOG_TRIVIAL(debug) << "Start gossiping" << std::endl;
+    gossip_timer_ = std::make_shared<deadline_timer>(io_service_, milliseconds(config_.gossip_interval));
+    gossip_timer_->async_wait(boost::bind(&dive::Dive::handle_gossip, this));
+}
 
+void dive::Dive::handle_gossip() {
+    std::cout << "Hey, Dude!" << std::endl;
+    restart_gossip_timer();
+}
+
+void dive::Dive::restart_gossip_timer() {
+    gossip_timer_->expires_at(gossip_timer_->expires_at() + milliseconds(config_.gossip_interval));
+    gossip_timer_->async_wait(boost::bind(&dive::Dive::handle_gossip, this));
 }
 
 const dive::config &dive::Dive::getConfig() const {
