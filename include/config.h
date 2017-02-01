@@ -6,7 +6,9 @@
 
 namespace dive {
     struct config {
-        std::string name;   // The name of this node. Must be unique in the cluster.
+        /// The name of this node. Must be unique in the cluster.
+        std::string name;
+
         std::string host;
         unsigned short port;
 

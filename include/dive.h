@@ -2,6 +2,7 @@
 #define DIVE_DIVE_H
 
 #include <array>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "config.h"
 
 using boost::asio::ip::udp;
@@ -23,11 +24,13 @@ namespace dive {
         Dive(const dive::config&, boost::asio::io_service&);
         void start_receive();
         void handle_receive(const boost::system::error_code&, std::size_t);
+        void start_gossiping();
 
         dive::config config_;
         udp::socket socket_;
         std::array<char, 128> recv_buffer_;
         udp::endpoint remote_endpoint_;
+        std::shared_ptr<boost::asio::deadline_timer> gossip_timer_;
     };
 }
 

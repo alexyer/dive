@@ -1,7 +1,7 @@
 project(test)
 
 set(CMAKE_CXX_FLAGS "-pthread")
-find_package(Boost 1.58.0 COMPONENTS program_options system log REQUIRED)
+find_package(Boost 1.58.0 COMPONENTS program_options system log date_time REQUIRED)
 
 include(CTest)
 enable_testing()

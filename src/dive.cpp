@@ -4,15 +4,19 @@
 #include <iostream>
 #include "../include/dive.h"
 
+using namespace boost::asio;
+using namespace boost::posix_time;
+
 const std::string dive::Dive::VERSION = "0.0.1";
 const unsigned short dive::Dive::PROTOCOL_VERSION = 1;
 
-dive::Dive dive::Dive::agent(const dive::config &conf, boost::asio::io_service &io_service) {
+dive::Dive dive::Dive::agent(const dive::config &conf, io_service &io_service) {
     return dive::Dive(conf, io_service);
 }
 
-dive::Dive::Dive(const dive::config &conf, boost::asio::io_service &io_service)
-        : config_(conf), socket_(io_service, udp::endpoint(udp::v4(), conf.port)) {
+dive::Dive::Dive(const dive::config &conf, io_service &io_service)
+        : config_(conf), socket_(io_service, udp::endpoint(udp::v4(), conf.port)),
+          gossip_timer_(std::make_shared<deadline_timer>(io_service, milliseconds(conf.gossip_interval))) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << socket_.local_endpoint().address().to_string() << ":"
                             << socket_.local_endpoint().port();
     start_receive();
@@ -24,7 +28,7 @@ void dive::Dive::start_receive() {
                                            boost::asio::placeholders::bytes_transferred));
 }
 
-void dive::Dive::handle_receive(const boost::system::error_code& error_code, std::size_t bytes_transferred) {
+void dive::Dive::handle_receive(const boost::system::error_code &error_code, std::size_t bytes_transferred) {
     if (!error_code) {
         std::cout << recv_buffer_.data() << std::endl;
     } else {
@@ -34,6 +38,10 @@ void dive::Dive::handle_receive(const boost::system::error_code& error_code, std
     start_receive();
 }
 
-const dive::config& dive::Dive::getConfig() const {
+void dive::Dive::start_gossiping() {
+
+}
+
+const dive::config &dive::Dive::getConfig() const {
     return config_;
 }
