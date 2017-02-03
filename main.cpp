@@ -7,7 +7,7 @@
 namespace po = boost::program_options;
 
 std::string command;
-std::string rpc_addr;
+std::string node_addr;
 std::string host;
 u_short port;
 po::options_description join_desc("join options");
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
         if (command == "join") {
             join_desc.add_options()
-                    ("rpc-addr", po::value<std::string>(&rpc_addr), "Address to the RPC server you want to connect.");
+                    ("node-addr", po::value<std::string>(&node_addr), "Address to the server you want to connect.");
 
             std::vector<std::string> opts = po::collect_unrecognized(parsed_options.options, po::include_positional);
             opts.erase(opts.begin());
@@ -53,13 +53,14 @@ int main(int argc, char *argv[]) {
     }
 
     boost::asio::io_service io_service;
+    dive::config config(host, port);
 
     if (command == "agent") {
-        dive::config config(host, port);
         auto dive = dive::Dive::agent(config, io_service);
         io_service.run();
     } else if (command == "join") {
-        std::cout << "rpc-addr" << vm["rpc-addr"].as<std::string>();
+        auto dive = dive::Dive::join(config, io_service, node_addr);
+        io_service.run();
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;

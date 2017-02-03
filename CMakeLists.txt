@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost 1.58.0 COMPONENTS program_options system log date_time REQUIRED)
 
-set(SOURCE_FILES main.cpp src/dive.cpp)
+set(SOURCE_FILES main.cpp src/dive.cpp src/rpc.cpp)
 set(CMAKE_CXX_FLAGS "-pthread")
 
 add_subdirectory(lib/proto)

@@ -4,7 +4,9 @@
 #include <array>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "config.h"
+#include "rpc.h"
 
+using namespace dive;
 using boost::asio::ip::udp;
 
 namespace dive {
@@ -13,25 +15,28 @@ namespace dive {
         static const std::string VERSION;
         static const unsigned short PROTOCOL_VERSION;
 
-        const dive::config& getConfig() const;
+        const config& getConfig() const;
 
         /***
-         * Create agent instance.
+         * Create an agent instance.
          * @return new Dive instance.
          */
-        static Dive agent(const dive::config&, boost::asio::io_service&);
+        static Dive agent(const config&, boost::asio::io_service&);
+
+        /***
+         * Create a new agent instance and join existing cluster.
+         * @param node_address Address of the known node to join.
+         * @return new Dive instance.
+         */
+        static Dive join(const config&, boost::asio::io_service&, std::string node_address);
     private:
-        Dive(const dive::config&, boost::asio::io_service&);
-        void start_receive();
-        void handle_receive(const boost::system::error_code&, std::size_t);
+        Dive(const config&, boost::asio::io_service&);
         void start_gossiping(boost::asio::io_service&);
         void handle_gossip();
         void restart_gossip_timer();
 
-        dive::config config_;
-        udp::socket socket_;
-        std::array<char, 128> recv_buffer_;
-        udp::endpoint remote_endpoint_;
+        config config_;
+        RPC rpc_;
         std::shared_ptr<boost::asio::deadline_timer> gossip_timer_;
     };
 }

@@ -14,7 +14,7 @@ download_project(
         UPDATE_DISCONNECTED 1
 )
 
-set(SOURCE_FILES ../src/dive.cpp)
+set(SOURCE_FILES ../src/dive.cpp ../src/rpc.cpp)
 
 
 if (Boost_FOUND)
