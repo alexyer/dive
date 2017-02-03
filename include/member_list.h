@@ -1,7 +1,10 @@
 #ifndef DIVE_MEMBER_LIST_H
 #define DIVE_MEMBER_LIST_H
 
+#include <unordered_map>
 #include "member.h"
+
+using namespace dive;
 
 namespace dive {
     /***
@@ -9,8 +12,20 @@ namespace dive {
      * Membership management.
      */
     class MemberList {
+    public:
+        /**
+         * Insert new member.
+         */
+        void insert(const Member&);
+
+        /**
+         *
+         * @param name Member name.
+         * @return Member
+         */
+        const Member& get(std::string name);
     private:
-        std::vector<dive::Member> members_;
+        std::unordered_map<std::string, Member> members_;
     };
 }
 

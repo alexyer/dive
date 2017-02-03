@@ -1,4 +1,6 @@
 #include <boost/asio.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
@@ -17,6 +19,16 @@ Dive Dive::agent(const config& conf, io_service &io_service) {
 
 Dive Dive::join(const dive::config& conf, boost::asio::io_service& io_service, std::string node_address) {
     auto dive = Dive(conf, io_service);
+
+    std::vector<std::string> details;
+    boost::split(details, node_address, boost::is_any_of(":"));
+
+    // TODO(alexyer): input data validation.
+    auto host = details[0];
+    auto port = std::stoi(details[1]);
+
+    std::cout << "Host: " << host << std::endl << "Port: " << port << std::endl;
+
     return dive;
 }
 

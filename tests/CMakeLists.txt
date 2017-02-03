@@ -14,7 +14,7 @@ download_project(
         UPDATE_DISCONNECTED 1
 )
 
-set(SOURCE_FILES ../src/dive.cpp ../src/rpc.cpp)
+set(SOURCE_FILES ../src/dive.cpp ../src/rpc.cpp ../src/member_list.cpp)
 
 
 if (Boost_FOUND)
@@ -23,6 +23,6 @@ if (Boost_FOUND)
 
     add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
 
-    add_executable(runUnitTests gtest.cpp dive_tests/dive_tests.cpp ${SOURCE_FILES})
+    add_executable(runUnitTests gtest.cpp dive_tests/dive_tests.cpp ${SOURCE_FILES} dive_tests/member_tests.cpp dive_tests/member_list_tests.cpp)
     target_link_libraries(runUnitTests gtest gmock ${Boost_LIBRARIES})
 endif ()

@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         auto dive = dive::Dive::agent(config, io_service);
         io_service.run();
     } else if (command == "join") {
-        auto dive = dive::Dive::join(config, io_service, node_addr);
+        auto dive = dive::Dive::join(config, io_service, vm["node-addr"].as<std::string>());
         io_service.run();
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
