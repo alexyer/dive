@@ -1,14 +1,16 @@
 #ifndef DIVE_QUEUED_MESSAGE_H
 #define DIVE_QUEUED_MESSAGE_H
 
+#include <lib/proto/message.pb.h>
+
 using namespace dive;
 
 namespace dive {
     struct QueuedMessage {
-        std::shared_ptr<DiveMessage> msg;
+        std::unique_ptr<DiveMessage> msg;
         unsigned int retransmitted_count;
 
-        QueuedMessage(msg) : msg(msg), retransmitted_count(0) {}
+        QueuedMessage(const DiveMessage& msg) : msg(std::make_unique<DiveMessage>(msg)), retransmitted_count(0) {}
         QueuedMessage(const Member&, MessageType, GossipType);
     };
 }

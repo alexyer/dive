@@ -37,7 +37,7 @@ namespace dive {
 
         config config_;
         RPC rpc_;
-        std::shared_ptr<boost::asio::deadline_timer> gossip_timer_;
+        std::unique_ptr<boost::asio::deadline_timer> gossip_timer_;
     };
 }
 

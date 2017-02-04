@@ -41,7 +41,7 @@ Dive::Dive(const config &conf, io_service &io_service)
 
 void Dive::start_gossiping(boost::asio::io_service& io_service_) {
     BOOST_LOG_TRIVIAL(debug) << "Start gossiping" << std::endl;
-    gossip_timer_ = std::make_shared<deadline_timer>(io_service_, milliseconds(config_.gossip_interval));
+    gossip_timer_ = std::make_unique<deadline_timer>(io_service_, milliseconds(config_.gossip_interval));
     gossip_timer_->async_wait(boost::bind(&Dive::handle_gossip, this));
 }
 
