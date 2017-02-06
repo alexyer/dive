@@ -11,7 +11,7 @@ namespace dive {
         Queue(unsigned int);
         unsigned int retransmit_limit(unsigned int);
     private:
-        unsigned int retransmit_limit_;
+        unsigned int retransmit_multiplier_;
     };
 }
 
