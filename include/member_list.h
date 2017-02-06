@@ -2,7 +2,7 @@
 #define DIVE_MEMBER_LIST_H
 
 #include <unordered_map>
-#include "member.h"
+#include "cluster_member.h"
 
 using namespace dive;
 
@@ -16,16 +16,16 @@ namespace dive {
         /**
          * Insert new member.
          */
-        void insert(const Member&);
+        void insert(const ClusterMember&);
 
         /**
          *
          * @param name Member name.
          * @return Member
          */
-        const Member& get(std::string name);
+        const ClusterMember& get(std::string name);
     private:
-        std::unordered_map<std::string, Member> members_;
+        std::unordered_map<std::string, ClusterMember> members_;
     };
 }
 

@@ -1,6 +1,7 @@
 #ifndef DIVE_QUEUED_MESSAGE_H
 #define DIVE_QUEUED_MESSAGE_H
 
+#include <memory>
 #include <lib/proto/message.pb.h>
 
 using namespace dive;
@@ -14,8 +15,12 @@ namespace dive {
         QueuedMessage(const DiveMessage &msg) : msg(std::make_unique<DiveMessage>(msg)), retransmitted_count(0) {}
         QueuedMessage(const Member &, MessageType, GossipType);
 
-        inline bool operator<(const QueuedMessage &other) {
-            return retransmitted_count < other.retransmitted_count;
+        friend bool operator<(const QueuedMessage& l, const QueuedMessage &r) {
+            return l.retransmitted_count < r.retransmitted_count;
+        };
+
+        friend bool operator>(const QueuedMessage& l, const QueuedMessage& r) {
+            return r < l;
         };
     };
 }

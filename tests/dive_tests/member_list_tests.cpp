@@ -3,7 +3,7 @@
 
 TEST(MemberList__Test, InsertMember) {
     dive::MemberList member_list;
-    auto member = dive::Member("test-name", "0.0.0.0", 13);
+    auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);
 
@@ -16,7 +16,7 @@ TEST(MemberList__Test, InsertMember) {
 
 TEST(Member__Test, InsertExistingMember) {
     dive::MemberList member_list;
-    auto member = dive::Member("test-name", "0.0.0.0", 13);
+    auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);
     ASSERT_ANY_THROW(member_list.insert(member));

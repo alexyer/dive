@@ -14,6 +14,8 @@ download_project(
         UPDATE_DISCONNECTED 1
 )
 
+set(CMAKE_CXX_FLAGS "-pthread")
+
 file(GLOB SOURCE_FILES "../src/*.cpp")
 file(GLOB TEST_SOURCE_FILES "./dive_tests/*.cpp")
 
@@ -24,5 +26,5 @@ if (Boost_FOUND)
 
     add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
     add_executable(runUnitTests gtest.cpp  ${SOURCE_FILES} ${TEST_SOURCE_FILES})
-    target_link_libraries(runUnitTests gtest gmock ${Boost_LIBRARIES})
+    target_link_libraries(runUnitTests gtest gmock dive_protobuf ${Boost_LIBRARIES})
 endif ()
