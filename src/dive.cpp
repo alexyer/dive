@@ -61,7 +61,8 @@ void Dive::handle_gossip() {
 }
 
 void Dive::handle_probe() {
-    std::cout << "Hey, Probe" << std::endl;
+    auto probe_member = member_list_.get_random();
+    BOOST_LOG_TRIVIAL(debug) << "Probing node: " << probe_member.name;
     restart_probe_timer();
 }
 

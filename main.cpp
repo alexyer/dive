@@ -14,6 +14,7 @@ po::options_description join_desc("join options");
 
 
 int main(int argc, char *argv[]) {
+    std::srand(std::time(0));
     po::options_description desc("Allowed options");
     desc.add_options()
             ("help", "produce help message")

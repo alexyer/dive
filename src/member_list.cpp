@@ -16,3 +16,8 @@ void MemberList::insert(const ClusterMember& new_member) {
 const ClusterMember& MemberList::get(std::string name) {
     return members_.at(name);
 }
+
+const ClusterMember& MemberList::get_random() const {
+    auto pair = std::next(std::begin(members_), std::rand() % members_.size());
+    return pair->second;
+}

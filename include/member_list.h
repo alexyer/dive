@@ -19,11 +19,17 @@ namespace dive {
         void insert(const ClusterMember&);
 
         /**
-         *
+         * Get member by name.
          * @param name Member name.
-         * @return Member
+         * @return ClusterMember
          */
         const ClusterMember& get(std::string name);
+
+        /***
+         * Get random member from the list.
+         * @return ClusterMember
+         */
+        const ClusterMember& get_random() const;
     private:
         std::unordered_map<std::string, ClusterMember> members_;
     };
