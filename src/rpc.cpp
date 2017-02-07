@@ -29,7 +29,7 @@ void RPC::start_send(io_service & io_service) {
 
 void RPC::handle_receive(const boost::system::error_code &error_code, std::size_t bytes_transferred) {
     if (!error_code) {
-        receive_handler_cb_(recv_buffer_);
+        receive_handler_cb_(recv_buffer_, remote_endpoint_);
     } else {
         // TODO(alexyer): Proper error handling
         std::cerr << error_code.message() << std::endl;

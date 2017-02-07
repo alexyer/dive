@@ -14,7 +14,7 @@ using ip::udp;
 using namespace dive;
 
 namespace dive {
-    typedef std::function<void(std::array<char, 128>)> receive_handler;
+    typedef std::function<void(std::array<char, 128>, udp::endpoint)> receive_handler;
 
     class RPC {
     public:

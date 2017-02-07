@@ -17,11 +17,11 @@ using namespace dive;
 const std::string Dive::VERSION = "0.0.1";
 const unsigned short Dive::PROTOCOL_VERSION = 1;
 
-Dive Dive::agent(const config &conf, io_service &io_service) {
+Dive Dive::agent(const config& conf, io_service& io_service) {
     return Dive(conf, io_service);
 }
 
-Dive Dive::join(const dive::config &conf, boost::asio::io_service &io_service, std::string node_address) {
+Dive Dive::join(const dive::config& conf, boost::asio::io_service& io_service, std::string node_address) {
     auto dive = Dive(conf, io_service);
 
     std::vector<std::string> details;
@@ -37,9 +37,9 @@ Dive Dive::join(const dive::config &conf, boost::asio::io_service &io_service, s
     return dive;
 }
 
-Dive::Dive(const config &conf, io_service &io_service)
+Dive::Dive(const config& conf, io_service& io_service)
         : config_(conf),
-          rpc_(conf, io_service, std::bind(&Dive::rpc_receive_cb, this, std::placeholders::_1)),
+          rpc_(conf, io_service, std::bind(&Dive::rpc_receive_cb, this, std::placeholders::_1, std::placeholders::_2)),
           queue_(conf.retransmit_multiplier) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << config_.host << ":" << config_.port;
     rpc_.start_receive();
@@ -47,13 +47,13 @@ Dive::Dive(const config &conf, io_service &io_service)
     start_probing(io_service);
 }
 
-void Dive::start_gossiping(boost::asio::io_service &io_service_) {
+void Dive::start_gossiping(boost::asio::io_service& io_service_) {
     BOOST_LOG_TRIVIAL(debug) << "Start gossiping";
     gossip_timer_ = std::make_unique<deadline_timer>(io_service_, milliseconds(config_.gossip_interval));
     gossip_timer_->async_wait(boost::bind(&Dive::handle_gossip, this));
 }
 
-void Dive::start_probing(boost::asio::io_service &io_service_) {
+void Dive::start_probing(boost::asio::io_service& io_service_) {
     BOOST_LOG_TRIVIAL(debug) << "Start pinging";
     probe_timer_ = std::make_unique<deadline_timer>(io_service_, milliseconds(config_.probe_interval));
     probe_timer_->async_wait(boost::bind(&Dive::handle_probe, this));
@@ -89,10 +89,24 @@ void Dive::restart_probe_timer() {
     probe_timer_->async_wait(boost::bind(&Dive::handle_probe, this));
 }
 
-const config &Dive::getConfig() const {
+const config& Dive::getConfig() const {
     return config_;
 }
 
-void Dive::rpc_receive_cb(std::array<char, 128> buffer) {
-    std::cout << "RPC received: " << buffer.data() << std::endl;
+void Dive::rpc_receive_cb(std::array<char, 128> buffer, udp::endpoint remote_endpoint) {
+    DiveMessage msg;
+    msg.ParseFromArray(buffer.data(), 128);
+
+    switch (msg.message_type()) {
+        case dive::PING:
+            handle_ping(msg, remote_endpoint);
+            break;
+        default:
+            throw std::runtime_error("Unknown message type");
+    }
+}
+
+void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
+    std::cout << "Ping from: " << remote_endpoint.address().to_string() << ":" << remote_endpoint.port()
+              << std::endl;
 }
