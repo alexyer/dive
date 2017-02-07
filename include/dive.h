@@ -33,14 +33,23 @@ namespace dive {
         static Dive join(const config&, boost::asio::io_service&, std::string node_address);
     private:
         Dive(const config&, boost::asio::io_service&);
+
         void start_gossiping(boost::asio::io_service&);
+        void start_probing(boost::asio::io_service&);
+
         void handle_gossip();
+        void handle_probe();
+
         void restart_gossip_timer();
+        void restart_probe_timer();
 
         config config_;
         RPC rpc_;
         Queue queue_;
+
         std::unique_ptr<boost::asio::deadline_timer> gossip_timer_;
+        std::unique_ptr<boost::asio::deadline_timer> probe_timer_;
+
         MemberList member_list_;
     };
 }

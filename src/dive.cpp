@@ -40,12 +40,19 @@ Dive::Dive(const config &conf, io_service &io_service)
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << config_.host << ":" << config_.port << std::endl;
     rpc_.start_receive();
     start_gossiping(io_service);
+    start_probing(io_service);
 }
 
 void Dive::start_gossiping(boost::asio::io_service& io_service_) {
-    BOOST_LOG_TRIVIAL(debug) << "Start gossiping" << std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "Start gossiping";
     gossip_timer_ = std::make_unique<deadline_timer>(io_service_, milliseconds(config_.gossip_interval));
     gossip_timer_->async_wait(boost::bind(&Dive::handle_gossip, this));
+}
+
+void Dive::start_probing(boost::asio::io_service &io_service_) {
+    BOOST_LOG_TRIVIAL(debug) << "Start pinging";
+    probe_timer_ = std::make_unique<deadline_timer>(io_service_, milliseconds(config_.probe_interval));
+    probe_timer_->async_wait(boost::bind(&Dive::handle_probe, this));
 }
 
 void Dive::handle_gossip() {
@@ -53,9 +60,19 @@ void Dive::handle_gossip() {
     restart_gossip_timer();
 }
 
+void Dive::handle_probe() {
+    std::cout << "Hey, Probe" << std::endl;
+    restart_probe_timer();
+}
+
 void Dive::restart_gossip_timer() {
     gossip_timer_->expires_at(gossip_timer_->expires_at() + milliseconds(config_.gossip_interval));
     gossip_timer_->async_wait(boost::bind(&Dive::handle_gossip, this));
+}
+
+void Dive::restart_probe_timer() {
+    probe_timer_->expires_at(probe_timer_->expires_at() + milliseconds(config_.probe_interval));
+    probe_timer_->async_wait(boost::bind(&Dive::handle_probe, this));
 }
 
 const config &Dive::getConfig() const {
