@@ -21,3 +21,7 @@ const ClusterMember& MemberList::get_random() const {
     auto pair = std::next(std::begin(members_), std::rand() % members_.size());
     return pair->second;
 }
+
+bool MemberList::empty() const {
+    return members_.empty();
+}

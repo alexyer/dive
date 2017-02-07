@@ -20,7 +20,7 @@ void RPC::start_receive() {
                                            boost::asio::placeholders::bytes_transferred));
 }
 
-void RPC::start_send(io_service &io_service) {
+void RPC::start_send(io_service & io_service) {
     BOOST_LOG_TRIVIAL(debug) << "RPC: start sending";
     send_queue_timer_ = std::make_unique<deadline_timer>(io_service, milliseconds(send_probe_period_));
     send_queue_timer_->async_wait(boost::bind(&RPC::handle_send, this));
@@ -28,7 +28,7 @@ void RPC::start_send(io_service &io_service) {
 
 void RPC::handle_receive(const boost::system::error_code &error_code, std::size_t bytes_transferred) {
     if (!error_code) {
-        std::cout << recv_buffer_.data() << std::endl;
+        std::cout << "Receive: " << recv_buffer_.data() << std::endl;
     } else {
         // TODO(alexyer): Proper error handling
         std::cerr << error_code.message() << std::endl;
@@ -37,8 +37,6 @@ void RPC::handle_receive(const boost::system::error_code &error_code, std::size_
 }
 
 void RPC::handle_send() {
-    BOOST_LOG_TRIVIAL(debug) << "send";
-
     send_messages();
 
     send_queue_timer_->expires_at(send_queue_timer_->expires_at() + milliseconds(send_probe_period_));
@@ -47,11 +45,24 @@ void RPC::handle_send() {
 
 void RPC::send_messages() {
     while (!send_queue_.empty()) {
-        std::cout << send_queue_.front() << std::endl;
+        const auto &msg = send_queue_.front();
+        auto serialized_msg = std::make_shared<std::string>();
+        msg.SerializeToString(serialized_msg.get());
+
+        ip::address_v4 addr(msg.destination().ip());
+        udp::endpoint endpoint;
+        endpoint.address(addr);
+        endpoint.port(msg.destination().port());
+
+        socket_.async_send_to(boost::asio::buffer(*serialized_msg), endpoint,
+                              boost::bind(&RPC::async_send_cb, this, serialized_msg, boost::asio::placeholders::error,
+                                          boost::asio::placeholders::bytes_transferred));
         send_queue_.pop();
     }
 }
 
-void RPC::enqueue_send_message(std::string msg) {
+void RPC::async_send_cb(const std::shared_ptr<std::string>, const boost::system::error_code &, std::size_t) {}
+
+void RPC::enqueue_send_message(DiveMessage msg) {
     send_queue_.push(msg);
 }

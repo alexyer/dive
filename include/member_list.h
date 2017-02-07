@@ -30,6 +30,7 @@ namespace dive {
          * @return ClusterMember
          */
         const ClusterMember& get_random() const;
+        bool empty() const;
     private:
         std::unordered_map<std::string, ClusterMember> members_;
     };
