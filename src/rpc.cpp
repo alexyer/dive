@@ -23,3 +23,7 @@ void RPC::handle_receive(const boost::system::error_code &error_code, std::size_
     }
     start_receive();
 }
+
+void RPC::enqueue_send_message(std::string msg) {
+    send_queue_.push(msg);
+}

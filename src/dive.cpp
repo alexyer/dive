@@ -7,6 +7,7 @@
 #include "../include/cluster_member.h"
 #include "../include/dive.h"
 #include "../include/member_factory.h"
+#include "../include/dive_message_factory.h"
 
 using namespace boost::asio;
 using namespace boost::posix_time;
@@ -62,7 +63,13 @@ void Dive::handle_gossip() {
 
 void Dive::handle_probe() {
     auto probe_member = member_list_.get_random();
+
     BOOST_LOG_TRIVIAL(debug) << "Probing node: " << probe_member.name;
+
+    auto msg = DiveMessageFactory::get_ping_message();
+
+    rpc_.enqueue_send_message(msg.SerializeAsString());
+
     restart_probe_timer();
 }
 
