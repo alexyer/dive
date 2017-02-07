@@ -22,6 +22,7 @@ message Gossip {
 
 message DiveMessage {
     required uint32 version = 1; // Protocol version
-    required MessageType message_type = 2;
-    repeated Gossip gossips = 3;
+    required Member destination = 2;
+    required MessageType message_type = 3;
+    repeated Gossip gossips = 4;
 }

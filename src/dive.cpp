@@ -66,8 +66,8 @@ void Dive::handle_probe() {
 
     BOOST_LOG_TRIVIAL(debug) << "Probing node: " << probe_member.name;
 
-    auto msg = DiveMessageFactory::get_ping_message();
-
+    auto destination = std::make_unique<Member>(MemberFactory::get_member(config_.host, config_.port));
+    auto msg = DiveMessageFactory::get_ping_message(destination.get());
     rpc_.enqueue_send_message(msg.SerializeAsString());
 
     restart_probe_timer();

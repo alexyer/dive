@@ -8,7 +8,7 @@ using namespace dive;
 namespace dive {
     class DiveMessageFactory {
     public:
-        static DiveMessage& get_ping_message();
+        static DiveMessage& get_ping_message(Member*);
     };
 }
 
