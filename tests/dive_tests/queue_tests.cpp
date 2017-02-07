@@ -9,7 +9,7 @@ TEST(Queue__Test, RetransmitLimit) {
     ASSERT_EQ(queue.retransmit_limit(10), 4);
 }
 
-TEST(Queue, DISABLED_Enqueue) {
+TEST(Queue, Enqueue) {
     dive::Queue queue(2);
 
     dive::ClusterMember member("0.0.0.0", 6869);

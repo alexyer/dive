@@ -2,6 +2,7 @@
 #define DIVE_CLUSTER_MEMBER_H
 
 #include <sstream>
+#include <boost/asio.hpp>
 
 namespace dive {
     struct ClusterMember {
@@ -14,6 +15,10 @@ namespace dive {
             std::stringstream ss;
             ss << host << ":" << port;
             name = ss.str();
+        }
+
+        unsigned long ip_ulong() const {
+            return boost::asio::ip::address_v4::from_string(host).to_ulong();
         }
     };
 }

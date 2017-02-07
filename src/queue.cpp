@@ -17,10 +17,17 @@ void Queue::enqueue_gossip(const Gossip &gsp) {
     std::make_heap(queue_.begin(), queue_.end());
 }
 
-void Queue::enqueue_gossip(const ClusterMember &member, GossipType msg_type) {
-    // TODO(alexyer): Gossip initialization
-    throw std::runtime_error("Not yet implemented");
-    queue_.push_back(QueuedGossip());
+void Queue::enqueue_gossip(const ClusterMember &member, GossipType gsp_type) {
+    Gossip gossip;
+    gossip.set_gossip_type(gsp_type);
+
+    Member gsp_member;
+    gsp_member.set_ip(member.ip_ulong());
+    gsp_member.set_port(member.port);
+
+    gossip.mutable_member()->Swap(&gsp_member);
+
+    queue_.push_back(QueuedGossip(gossip));
     std::make_heap(queue_.begin(), queue_.end());
 }
 

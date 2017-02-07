@@ -11,7 +11,7 @@ enum GossipType {
 }
 
 message Member {
-    required uint32 ip = 1;
+    required uint64 ip = 1;
     required uint32 port = 2;
 }
 
