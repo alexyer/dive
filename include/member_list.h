@@ -13,6 +13,8 @@ namespace dive {
      */
     class MemberList {
     public:
+        MemberList();
+
         /**
          * Insert new member.
          */
@@ -32,6 +34,8 @@ namespace dive {
         const ClusterMember& get_random() const;
     private:
         std::unordered_map<std::string, ClusterMember> members_;
+        std::random_device rd_;
+        std::mt19937 eng_;
     };
 }
 
