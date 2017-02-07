@@ -12,7 +12,7 @@ unsigned int Queue::retransmit_limit(unsigned int number_of_nodes) {
     return retransmit_multiplier_ * (unsigned int)std::ceil(std::log10(number_of_nodes + 1));
 }
 
-void Queue::enqueue_gossip(const Gossip &gsp) {
+void Queue::enqueue_gossip(const Gossip& gsp) {
     queue_.push_back(QueuedGossip(gsp));
     std::make_heap(queue_.begin(), queue_.end());
 }

@@ -4,6 +4,7 @@
 #include <array>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "config.h"
+#include "member_list.h"
 #include "rpc.h"
 #include "queue.h"
 
@@ -40,6 +41,7 @@ namespace dive {
         RPC rpc_;
         Queue queue_;
         std::unique_ptr<boost::asio::deadline_timer> gossip_timer_;
+        MemberList member_list_;
     };
 }
 

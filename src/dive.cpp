@@ -4,6 +4,7 @@
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
+#include "../include/cluster_member.h"
 #include "../include/dive.h"
 #include "../include/member_factory.h"
 
@@ -28,7 +29,8 @@ Dive Dive::join(const dive::config& conf, boost::asio::io_service& io_service, s
     auto host = details[0];
     auto port = std::stoi(details[1]);
 
-//    dive.queue_.enqueue_gossip(MemberFactory::get_member(host, port));
+    dive.queue_.enqueue_gossip(MemberFactory::get_member(conf.host, conf.port), dive::ALIVE);
+    dive.member_list_.insert(ClusterMember(host, port));
 
     return dive;
 }

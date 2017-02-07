@@ -7,8 +7,8 @@
 namespace dive {
     class MemberFactory {
     public:
-        static std::shared_ptr<Member> get_member(unsigned long ip, unsigned int port);
-        static std::shared_ptr<Member> get_member(std::string host, unsigned int port);
+        static Member& get_member(unsigned long ip, unsigned int port);
+        static Member& get_member(std::string host, unsigned int port);
     };
 }
 
