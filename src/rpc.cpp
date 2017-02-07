@@ -39,8 +39,17 @@ void RPC::handle_receive(const boost::system::error_code &error_code, std::size_
 void RPC::handle_send() {
     BOOST_LOG_TRIVIAL(debug) << "send";
 
+    send_messages();
+
     send_queue_timer_->expires_at(send_queue_timer_->expires_at() + milliseconds(send_probe_period_));
     send_queue_timer_->async_wait(boost::bind(&RPC::handle_send, this));
+}
+
+void RPC::send_messages() {
+    while (!send_queue_.empty()) {
+        std::cout << send_queue_.front() << std::endl;
+        send_queue_.pop();
+    }
 }
 
 void RPC::enqueue_send_message(std::string msg) {

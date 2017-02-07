@@ -35,6 +35,7 @@ namespace dive {
     private:
         void handle_receive(const boost::system::error_code&, std::size_t);
         void handle_send();
+        void send_messages();
 
         unsigned int send_probe_period_;
         udp::socket socket_;
