@@ -14,24 +14,24 @@ TEST(Queue, DISABLED_Enqueue) {
 
     dive::ClusterMember member("0.0.0.0", 6869);
 
-    queue.enqueue_message(member, dive::ACK, dive::ALIVE);
-    queue.get_message().retransmitted_count = 3;
+    queue.enqueue_gossip(member, dive::ALIVE);
+    queue.get_gossip().retransmitted_count = 3;
 
-    queue.enqueue_message(member, dive::ACK, dive::ALIVE);
+    queue.enqueue_gossip(member, dive::ALIVE);
 
-    ASSERT_EQ(queue.get_message().retransmitted_count, 0);
+    ASSERT_EQ(queue.get_gossip().retransmitted_count, 0);
 }
 
 TEST(Queue, EnqueueMsg) {
     dive::Queue queue(2);
 
-    dive::DiveMessage msg;
-    dive::DiveMessage other_msg;
+    dive::Gossip gsp;
+    dive::Gossip other_gsp;
 
-    queue.enqueue_message(msg);
-    queue.get_message().retransmitted_count = 3;
+    queue.enqueue_gossip(gsp);
+    queue.get_gossip().retransmitted_count = 3;
 
-    queue.enqueue_message(other_msg);
+    queue.enqueue_gossip(other_gsp);
 
-    ASSERT_EQ(queue.get_message().retransmitted_count, 0);
+    ASSERT_EQ(queue.get_gossip().retransmitted_count, 0);
 }

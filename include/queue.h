@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <lib/proto/message.pb.h>
-#include "queued_message.h"
+#include "queued_gossip.h"
 #include "cluster_member.h"
 
 using namespace dive;
@@ -19,11 +19,11 @@ namespace dive {
 
         /***
          * Enqueue message.
-         * @param msg Message to enqueue.
+         * @param gsp Message to enqueue.
          */
-        void enqueue_message(const DiveMessage& msg);
-        void enqueue_message(const ClusterMember& member, MessageType, GossipType);
-        QueuedMessage& get_message();
+        void enqueue_gossip(const Gossip& gsp);
+        void enqueue_gossip(const ClusterMember& member, GossipType);
+        QueuedGossip& get_gossip();
         unsigned int retransmit_limit(unsigned int);
     private:
         unsigned int retransmit_multiplier_;
@@ -31,7 +31,7 @@ namespace dive {
         /***
          * Min heap of queued messages.
          */
-        std::vector<QueuedMessage> queue_;
+        std::vector<QueuedGossip> queue_;
     };
 }
 
