@@ -5,6 +5,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "config.h"
 #include "rpc.h"
+#include "queue.h"
 
 using namespace dive;
 using boost::asio::ip::udp;
@@ -37,6 +38,7 @@ namespace dive {
 
         config config_;
         RPC rpc_;
+        Queue queue_;
         std::unique_ptr<boost::asio::deadline_timer> gossip_timer_;
     };
 }

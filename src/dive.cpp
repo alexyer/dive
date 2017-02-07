@@ -5,6 +5,7 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include "../include/dive.h"
+#include "../include/member_factory.h"
 
 using namespace boost::asio;
 using namespace boost::posix_time;
@@ -27,13 +28,13 @@ Dive Dive::join(const dive::config& conf, boost::asio::io_service& io_service, s
     auto host = details[0];
     auto port = std::stoi(details[1]);
 
-    std::cout << "Host: " << host << std::endl << "Port: " << port << std::endl;
+//    dive.queue_.enqueue_gossip(MemberFactory::get_member(host, port));
 
     return dive;
 }
 
 Dive::Dive(const config &conf, io_service &io_service)
-        : config_(conf), rpc_(conf, io_service) {
+        : config_(conf), rpc_(conf, io_service), queue_(conf.retransmit_multiplier) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << config_.host << ":" << config_.port << std::endl;
     rpc_.start_receive();
     start_gossiping(io_service);

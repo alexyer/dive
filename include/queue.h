@@ -15,7 +15,7 @@ namespace dive {
      */
     class Queue {
     public:
-        Queue(unsigned int);
+        Queue(unsigned int retransmit_multiplier);
 
         /***
          * Enqueue message.
@@ -23,6 +23,7 @@ namespace dive {
          */
         void enqueue_gossip(const Gossip& gsp);
         void enqueue_gossip(const ClusterMember& member, GossipType);
+        void enqueue_gossip(const Member& member, GossipType);
         QueuedGossip& get_gossip();
         unsigned int retransmit_limit(unsigned int);
     private:
