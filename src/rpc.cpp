@@ -7,10 +7,11 @@ using namespace dive;
 using boost::asio::ip::udp;
 using namespace boost::posix_time;
 
-RPC::RPC(const config &conf, io_service &io_service)
+RPC::RPC(const config &conf, io_service &io_service, receive_handler handler)
         : socket_(io_service, udp::endpoint(udp::v4(), conf.port)),
         // Use the smallest interval to empty queue faster
-          send_probe_period_(conf.probe_interval < conf.gossip_interval ? conf.probe_interval : conf.gossip_interval) {
+          send_probe_period_(conf.probe_interval < conf.gossip_interval ? conf.probe_interval : conf.gossip_interval),
+          receive_handler_cb_(handler) {
     start_send(io_service);
 }
 
@@ -28,7 +29,7 @@ void RPC::start_send(io_service & io_service) {
 
 void RPC::handle_receive(const boost::system::error_code &error_code, std::size_t bytes_transferred) {
     if (!error_code) {
-        std::cout << "Receive: " << recv_buffer_.data() << std::endl;
+        receive_handler_cb_(recv_buffer_);
     } else {
         // TODO(alexyer): Proper error handling
         std::cerr << error_code.message() << std::endl;

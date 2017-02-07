@@ -3,6 +3,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
+#include <functional>
 #include <iostream>
 #include "../include/cluster_member.h"
 #include "../include/dive.h"
@@ -37,7 +38,9 @@ Dive Dive::join(const dive::config &conf, boost::asio::io_service &io_service, s
 }
 
 Dive::Dive(const config &conf, io_service &io_service)
-        : config_(conf), rpc_(conf, io_service), queue_(conf.retransmit_multiplier) {
+        : config_(conf),
+          rpc_(conf, io_service, std::bind(&Dive::rpc_receive_cb, this, std::placeholders::_1)),
+          queue_(conf.retransmit_multiplier) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << config_.host << ":" << config_.port;
     rpc_.start_receive();
     start_gossiping(io_service);
@@ -88,4 +91,8 @@ void Dive::restart_probe_timer() {
 
 const config &Dive::getConfig() const {
     return config_;
+}
+
+void Dive::rpc_receive_cb(std::array<char, 128> buffer) {
+    std::cout << "RPC received: " << buffer.data() << std::endl;
 }

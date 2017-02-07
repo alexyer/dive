@@ -16,6 +16,7 @@ namespace dive {
     public:
         static const std::string VERSION;
         static const unsigned short PROTOCOL_VERSION;
+        static const size_t BUFFER_SIZE;
 
         const config& getConfig() const;
 
@@ -31,6 +32,7 @@ namespace dive {
          * @return new Dive instance.
          */
         static Dive join(const config&, boost::asio::io_service&, std::string node_address);
+        void rpc_receive_cb(std::array<char, 128>);
     private:
         Dive(const config&, boost::asio::io_service&);
 
@@ -42,6 +44,7 @@ namespace dive {
 
         void restart_gossip_timer();
         void restart_probe_timer();
+
 
         config config_;
         RPC rpc_;

@@ -2,6 +2,7 @@
 #define DIVE_RPC_H
 
 #include <array>
+#include <functional>
 #include <ostream>
 #include <queue>
 #include <boost/asio.hpp>
@@ -13,9 +14,11 @@ using ip::udp;
 using namespace dive;
 
 namespace dive {
+    typedef std::function<void(std::array<char, 128>)> receive_handler;
+
     class RPC {
     public:
-        RPC(const config&, io_service&);
+        RPC(const config&, io_service&, receive_handler);
         /***
          * Start receiving messages.
          */
@@ -45,6 +48,7 @@ namespace dive {
         udp::endpoint remote_endpoint_;
         std::queue<DiveMessage> send_queue_;
         std::unique_ptr<deadline_timer> send_queue_timer_;
+        receive_handler receive_handler_cb_;
     };
 }
 
