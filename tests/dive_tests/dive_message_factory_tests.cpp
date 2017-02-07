@@ -11,3 +11,10 @@ TEST(DiveMessageFactory, get_ping_message) {
     ASSERT_EQ(msg->version(), Dive::PROTOCOL_VERSION);
     ASSERT_EQ(msg->message_type(), dive::PING);
 }
+
+TEST(DiveMessageFactory, get_ack_message) {
+    auto member = std::make_unique<Member>(MemberFactory::get_member("0.0.0.0", 13));
+    auto msg = std::make_unique<DiveMessage>(DiveMessageFactory::get_ack_message(member.get()));
+    ASSERT_EQ(msg->version(), Dive::PROTOCOL_VERSION);
+    ASSERT_EQ(msg->message_type(), dive::ACK);
+}

@@ -9,6 +9,10 @@ namespace dive {
     class DiveMessageFactory {
     public:
         static DiveMessage& get_ping_message(Member*);
+        static DiveMessage& get_ack_message(Member*);
+
+    private:
+        static DiveMessage& get_message(Member*, MessageType);
     };
 }
 
