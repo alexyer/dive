@@ -3,8 +3,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
-#include <functional>
 #include <iostream>
+#include "../include/errors.h"
 #include "../include/cluster_member.h"
 #include "../include/dive.h"
 #include "../include/member_factory.h"
@@ -102,11 +102,13 @@ void Dive::rpc_receive_cb(std::array<char, 128> buffer, udp::endpoint remote_end
             handle_ping(msg, remote_endpoint);
             break;
         default:
-            throw std::runtime_error("Unknown message type");
+            throw UnknownCommandTypeError(msg.message_type());
     }
 }
 
 void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
-    std::cout << "Ping from: " << remote_endpoint.address().to_string() << ":" << remote_endpoint.port()
-              << std::endl;
+    auto destination = std::make_unique<Member>(
+            MemberFactory::get_member(remote_endpoint.address().to_string(), remote_endpoint.port()));
+    auto ack_msg = DiveMessageFactory::get_ack_message(destination.get());
+    rpc_.enqueue_send_message(ack_msg);
 }
