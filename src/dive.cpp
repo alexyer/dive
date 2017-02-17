@@ -101,6 +101,9 @@ void Dive::rpc_receive_cb(std::array<char, 128> buffer, udp::endpoint remote_end
         case dive::PING:
             handle_ping(msg, remote_endpoint);
             break;
+        case dive::ACK:
+            handle_ack(msg, remote_endpoint);
+            break;
         default:
             throw UnknownCommandTypeError(msg.message_type());
     }
@@ -111,4 +114,8 @@ void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
             MemberFactory::get_member(remote_endpoint.address().to_string(), remote_endpoint.port()));
     auto ack_msg = DiveMessageFactory::get_ack_message(destination.get());
     rpc_.enqueue_send_message(ack_msg);
+}
+
+void Dive::handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint) {
+//    std::cout << "ACK from: " << remote_endpoint.address().to_string() << ":" << std::to_string(remote_endpoint.port()) << std::endl;
 }

@@ -49,6 +49,13 @@ namespace dive {
          */
         void handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint);
 
+        /***
+         * Handle received ACK message.
+         * @param msg Received message.
+         * @param remote_endpoint Endpoint of the remote node.
+         */
+        void handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint);
+
         void restart_gossip_timer();
         void restart_probe_timer();
 
