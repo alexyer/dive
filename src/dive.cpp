@@ -117,5 +117,5 @@ void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
 }
 
 void Dive::handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint) {
-    std::cout << "ACK from: " << remote_endpoint.address().to_string() << ":" << std::to_string(remote_endpoint.port()) << std::endl;
+    member_list_.consider_alive(utils::remote_endpoint2str(remote_endpoint));
 }

@@ -46,8 +46,8 @@ void MemberList::enqueue_probe_deadline(const ClusterMember& member) {
     auto timer_expired = probe_deadline_timer_->expires_at() < boost::posix_time::microsec_clock::local_time();
     auto restart_timer = probing_members_.empty() || timer_expired;
 
-    probing_members_.emplace(boost::posix_time::microsec_clock::local_time() + milliseconds(probe_timeout_),
-                             member);
+    probing_members_.emplace_back(boost::posix_time::microsec_clock::local_time() + milliseconds(probe_timeout_),
+                                  member);
 
     if (restart_timer) {
         restart_deadline_timer();
@@ -70,9 +70,9 @@ void MemberList::handle_probe_deadline() {
         BOOST_LOG_TRIVIAL(debug) << probing_members_.front().member->name << " is dead";
     }
 
-    probing_members_.pop();
+    probing_members_.pop_front();
 
-    if(!probing_members_.empty()) {
+    if (!probing_members_.empty()) {
         restart_deadline_timer();
     }
 }
@@ -80,4 +80,16 @@ void MemberList::handle_probe_deadline() {
 void MemberList::restart_deadline_timer() {
     probe_deadline_timer_->expires_at(probing_members_.front().expiration_time);
     probe_deadline_timer_->async_wait(boost::bind(&MemberList::handle_probe_deadline, this));
+}
+
+void MemberList::consider_alive(std::string name) {
+    probe_deadline_timer_->cancel();
+
+    probing_members_.erase(std::remove_if(probing_members_.begin(), probing_members_.end(), [&](ProbeDeadline probe_deadline) {
+        return probe_deadline.member->name == name;
+    }), probing_members_.end());
+
+    if(!probing_members_.empty()) {
+        restart_deadline_timer();
+    }
 }

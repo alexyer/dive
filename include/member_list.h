@@ -1,8 +1,8 @@
 #ifndef DIVE_MEMBER_LIST_H
 #define DIVE_MEMBER_LIST_H
 
+#include <deque>
 #include <unordered_map>
-#include <queue>
 #include "cluster_member.h"
 
 using namespace dive;
@@ -46,6 +46,13 @@ namespace dive {
          * @return ClusterMember
          */
         const ClusterMember& probe_member(std::string name);
+
+        /***
+         * Consider member alive and remove from deadline queue.
+         * @param name
+         */
+        void consider_alive(std::string name);
+
         bool empty() const;
     private:
         struct ProbeDeadline {
@@ -66,7 +73,7 @@ namespace dive {
 
         std::unique_ptr<boost::asio::deadline_timer> probe_deadline_timer_;
         /// List of members waiting for ACK response.
-        std::queue<ProbeDeadline> probing_members_;
+        std::deque<ProbeDeadline> probing_members_;
 
         std::unordered_map<std::string, ClusterMember> members_;
     };
