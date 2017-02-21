@@ -2,7 +2,7 @@
 #include "../../include/member_list.h"
 
 TEST(MemberList__Test, InsertMember) {
-    dive::MemberList member_list;
+    dive::MemberList member_list(200);
     auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);
@@ -15,7 +15,7 @@ TEST(MemberList__Test, InsertMember) {
 }
 
 TEST(Member__Test, InsertExistingMember) {
-    dive::MemberList member_list;
+    dive::MemberList member_list(200);
     auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);
