@@ -2,14 +2,14 @@
 #include "../include/member_list.h"
 #include <iostream>
 #include <boost/bind.hpp>
+#include <boost/log/trivial.hpp>
 
 using namespace boost::asio;
 using namespace boost::posix_time;
 using namespace dive;
 
 MemberList::MemberList(io_service& io_service, unsigned int probe_timeout) : probe_timeout_{probe_timeout} {
-    probe_deadline_timer_ = std::make_unique<deadline_timer>(io_service, milliseconds(probe_timeout));
-    probe_deadline_timer_->async_wait(boost::bind(&MemberList::handle_probe_deadline, this));
+    probe_deadline_timer_ = std::make_unique<deadline_timer>(io_service);
 }
 
 void MemberList::insert(const ClusterMember& new_member) {
@@ -43,8 +43,10 @@ const ClusterMember& MemberList::probe_member(std::string name) {
 }
 
 void MemberList::enqueue_probe_deadline(const ClusterMember& member) {
-    auto restart_timer = probing_members_.empty();
-    probing_members_.emplace(boost::posix_time::microsec_clock::universal_time() + milliseconds(probe_timeout_),
+    auto timer_expired = probe_deadline_timer_->expires_at() < boost::posix_time::microsec_clock::local_time();
+    auto restart_timer = probing_members_.empty() || timer_expired;
+
+    probing_members_.emplace(boost::posix_time::microsec_clock::local_time() + milliseconds(probe_timeout_),
                              member);
 
     if (restart_timer) {
@@ -61,7 +63,13 @@ void MemberList::handle_probe_deadline() {
         return;
     }
 
-    members_.erase(members_.find(probing_members_.front().member->name));
+    auto member_it = members_.find(probing_members_.front().member->name);
+
+    if (member_it != members_.end()) {
+        members_.erase(members_.find(probing_members_.front().member->name));
+        BOOST_LOG_TRIVIAL(debug) << probing_members_.front().member->name << " is dead";
+    }
+
     probing_members_.pop();
 
     if(!probing_members_.empty()) {

@@ -69,7 +69,7 @@ void Dive::handle_probe() {
 
         BOOST_LOG_TRIVIAL(debug) << "Probing node: " << probe_member.name;
 
-        auto dst_cluster_member = member_list_.get_random();
+        auto dst_cluster_member = member_list_.probe_random();
         auto destination = std::make_unique<Member>(
                 MemberFactory::get_member(dst_cluster_member.host, dst_cluster_member.port));
         auto msg = DiveMessageFactory::get_ping_message(destination.get());
@@ -117,5 +117,5 @@ void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
 }
 
 void Dive::handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint) {
-//    std::cout << "ACK from: " << remote_endpoint.address().to_string() << ":" << std::to_string(remote_endpoint.port()) << std::endl;
+    std::cout << "ACK from: " << remote_endpoint.address().to_string() << ":" << std::to_string(remote_endpoint.port()) << std::endl;
 }
