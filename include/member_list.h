@@ -2,9 +2,11 @@
 #define DIVE_MEMBER_LIST_H
 
 #include <unordered_map>
+#include <queue>
 #include "cluster_member.h"
 
 using namespace dive;
+using namespace boost::asio;
 
 namespace dive {
     /***
@@ -13,7 +15,7 @@ namespace dive {
      */
     class MemberList {
     public:
-        MemberList(unsigned int probe_timeout);
+        MemberList(io_service& io_service, unsigned int probe_timeout);
 
         /**
          * Insert new member.
@@ -37,7 +39,13 @@ namespace dive {
          * Get random member from the list and start deadline timer.
          * @return ClusterMember
          */
-        const ClusterMember& probe_random() const;
+        const ClusterMember& probe_random();
+
+        /***
+         * Get member by name from the list and start deadline timer.
+         * @return ClusterMember
+         */
+        const ClusterMember& probe_member(std::string name);
         bool empty() const;
     private:
         struct ProbeDeadline {
@@ -48,13 +56,17 @@ namespace dive {
                     : expiration_time(expiration_time), member(std::make_shared<ClusterMember>(member)) {}
         };
 
+        void enqueue_probe_deadline(const ClusterMember& member);
+        void handle_probe_deadline();
+        void restart_deadline_timer();
+
         // TODO(alexyer): update docs after implementing failure detector.
         /// Time in milliseconds before member considered dead.
         unsigned int probe_timeout_;
 
         std::unique_ptr<boost::asio::deadline_timer> probe_deadline_timer_;
         /// List of members waiting for ACK response.
-        std::vector<ProbeDeadline> probing_members_;
+        std::queue<ProbeDeadline> probing_members_;
 
         std::unordered_map<std::string, ClusterMember> members_;
     };

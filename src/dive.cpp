@@ -40,7 +40,7 @@ Dive Dive::join(const dive::config& conf, boost::asio::io_service& io_service, s
 Dive::Dive(const config& conf, io_service& io_service)
         : config_(conf),
           rpc_(conf, io_service, std::bind(&Dive::rpc_receive_cb, this, std::placeholders::_1, std::placeholders::_2)),
-          queue_(conf.retransmit_multiplier), member_list_(conf.probe_timeout) {
+          queue_(conf.retransmit_multiplier), member_list_(io_service, conf.probe_timeout) {
     BOOST_LOG_TRIVIAL(info) << "Starting Dive agent on " << config_.host << ":" << config_.port;
     rpc_.start_receive();
     start_gossiping(io_service);
