@@ -118,4 +118,13 @@ void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
 
 void Dive::handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint) {
     member_list_.consider_alive(utils::remote_endpoint2str(remote_endpoint));
+    read_gossips(msg);
+}
+
+void Dive::read_gossips(const DiveMessage& msg) {
+    if (msg.gossips_size()) {
+        for (auto gossip : msg.gossips()) {
+            std::cout << gossip.member().ip() << std::endl;
+        }
+    }
 }

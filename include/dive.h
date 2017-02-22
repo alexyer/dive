@@ -43,6 +43,12 @@ namespace dive {
         void handle_probe();
 
         /***
+         * Read gossips from the received message and update members list.
+         * @param msg Received message.
+         */
+        void read_gossips(const DiveMessage& msg);
+
+        /***
          * Handle received PING message.
          * @param msg Received message.
          * @param remote_endpoint Endpoint of the remote node.
