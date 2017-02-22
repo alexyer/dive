@@ -17,7 +17,7 @@ download_project(
 set(CMAKE_CXX_FLAGS "-pthread")
 
 file(GLOB SOURCE_FILES "../src/*.cpp")
-file(GLOB TEST_SOURCE_FILES "./dive_tests/*.cpp" "./stubs/*.cpp")
+file(GLOB TEST_SOURCE_FILES "./dive_tests/*.cpp" "./stubs/*.cpp"  "./stubs/*.h")
 
 
 if (Boost_FOUND)
