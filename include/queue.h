@@ -24,8 +24,14 @@ namespace dive {
         void enqueue_gossip(const Gossip& gsp);
         void enqueue_gossip(const ClusterMember& member, GossipType);
         void enqueue_gossip(const Member& member, GossipType);
+        /***
+         * Update heap.
+         * FIXME(alexyer): Bad name.
+         */
+        void rebuild();
         QueuedGossip& get_gossip();
         unsigned int retransmit_limit(unsigned int);
+        unsigned long size();
     private:
         unsigned int retransmit_multiplier_;
 

@@ -14,7 +14,7 @@ unsigned int Queue::retransmit_limit(unsigned int number_of_nodes) {
 
 void Queue::enqueue_gossip(const Gossip& gsp) {
     queue_.push_back(QueuedGossip(gsp));
-    std::make_heap(queue_.begin(), queue_.end());
+    rebuild();
 }
 
 void Queue::enqueue_gossip(const ClusterMember &member, GossipType gsp_type) {
@@ -39,4 +39,12 @@ void Queue::enqueue_gossip(const Member &member, GossipType gsp_type) {
 
 QueuedGossip& Queue::get_gossip() {
     return queue_.back();
+}
+
+unsigned long Queue::size() {
+    return queue_.size();
+}
+
+void Queue::rebuild() {
+    std::make_heap(queue_.begin(), queue_.end());
 }

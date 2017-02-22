@@ -24,7 +24,8 @@ namespace dive {
     template<typename TimerType = deadline_timer>
     class MemberList {
     public:
-        MemberList(io_service& io_service, unsigned int probe_timeout) : probe_timeout_{probe_timeout} {
+        MemberList(io_service& io_service, unsigned int probe_timeout)
+                : probe_timeout_{probe_timeout} {
             probe_deadline_timer_ = std::make_unique<TimerType>(io_service);
         }
 
@@ -81,13 +82,26 @@ namespace dive {
          * Consider member alive and remove from deadline queue.
          * @param name
          */
+         // TODO(alexyer): Hacky. Probably it's better to remove this method.
         void consider_alive(std::string name) {
             probe_deadline_timer_->cancel();
 
-            probing_members_.erase(
-                    std::remove_if(probing_members_.begin(), probing_members_.end(), [&](ProbeDeadline probe_deadline) {
-                        return probe_deadline.member->name == name;
-                    }), probing_members_.end());
+            remove_member_from_probing(name);
+
+            if (!probing_members_.empty()) {
+                restart_deadline_timer();
+            }
+        }
+
+        void consider_alive(ClusterMember& member) {
+            probe_deadline_timer_->cancel();
+
+            if (members_.find(member.name) == members_.end()) {
+                BOOST_LOG_TRIVIAL(info) << "New member: " << member.name;
+                members_.insert({member.name, member});
+            }
+
+            remove_member_from_probing(member.name);
 
             if (!probing_members_.empty()) {
                 restart_deadline_timer();
@@ -131,15 +145,18 @@ namespace dive {
         }
 
         void handle_probe_deadline() {
-            if (probing_members_.empty()) {
+            // TODO(alexyer): Ugly. Encapsulate cancellation logic into timer wrapper.
+            auto timer_cancelled = probe_deadline_timer_->expires_at() > microsec_clock::local_time();
+            if (probing_members_.empty() || timer_cancelled) {
                 return;
             }
 
             auto member_it = members_.find(probing_members_.front().member->name);
 
             if (member_it != members_.end()) {
-                members_.erase(members_.find(probing_members_.front().member->name));
-                BOOST_LOG_TRIVIAL(debug) << probing_members_.front().member->name << " is dead";
+                auto name = member_it->first;
+                members_.erase(member_it);
+                BOOST_LOG_TRIVIAL(debug) << name << " is dead";
             }
 
             probing_members_.pop_front();
@@ -152,6 +169,13 @@ namespace dive {
         void restart_deadline_timer() {
             probe_deadline_timer_->expires_at(probing_members_.front().expiration_time);
             probe_deadline_timer_->async_wait(boost::bind(&MemberList::handle_probe_deadline, this));
+        }
+
+        void remove_member_from_probing(std::string name) {
+            probing_members_.erase(
+                    std::remove_if(probing_members_.begin(), probing_members_.end(), [&](ProbeDeadline probe_deadline) {
+                        return probe_deadline.member->name == name;
+                    }), probing_members_.end());
         }
     };
 }

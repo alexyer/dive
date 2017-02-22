@@ -36,17 +36,21 @@ namespace dive {
     private:
         Dive(const config&, boost::asio::io_service&);
 
-        void start_gossiping(boost::asio::io_service&);
         void start_probing(boost::asio::io_service&);
 
-        void handle_gossip();
         void handle_probe();
 
         /***
          * Read gossips from the received message and update members list.
-         * @param msg Received message.
+         * @param msg Incoming message.
          */
         void read_gossips(const DiveMessage& msg);
+
+        /***
+         * Add gossips to message.
+         * @param msg Outcoming message.
+         */
+        void piggyback_gossips(DiveMessage& msg);
 
         /***
          * Handle received PING message.
@@ -62,7 +66,11 @@ namespace dive {
          */
         void handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint);
 
-        void restart_gossip_timer();
+        /***
+         * Handle alive gossip.
+         * @param gsp Incoming gossip.
+         */
+        void handle_gossip_alive(const Gossip& gsp);
         void restart_probe_timer();
 
 
