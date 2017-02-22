@@ -4,6 +4,7 @@
 #include <deque>
 #include <unordered_map>
 
+#include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/date_time.hpp>
@@ -23,7 +24,7 @@ namespace dive {
     class MemberList {
     public:
         MemberList(io_service& io_service, unsigned int probe_timeout) : probe_timeout_{probe_timeout} {
-            probe_deadline_timer_ = std::make_unique<deadline_timer>(io_service);
+            probe_deadline_timer_ = std::make_unique<TimerType>(io_service);
         }
 
         /**
@@ -117,11 +118,11 @@ namespace dive {
         std::unordered_map<std::string, ClusterMember> members_;
 
         void enqueue_probe_deadline(const ClusterMember& member) {
-            auto timer_expired = probe_deadline_timer_->expires_at() < boost::posix_time::microsec_clock::local_time();
+            auto timer_expired = probe_deadline_timer_->expires_at() < microsec_clock::local_time();
             auto restart_timer = probing_members_.empty() || timer_expired;
 
             probing_members_.emplace_back(
-                    boost::posix_time::microsec_clock::local_time() + milliseconds(probe_timeout_),
+                    microsec_clock::local_time() + milliseconds(probe_timeout_),
                     member);
 
             if (restart_timer) {
