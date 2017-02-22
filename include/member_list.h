@@ -10,6 +10,7 @@
 #include <boost/date_time.hpp>
 
 #include "cluster_member.h"
+#include "errors.h"
 
 using namespace dive;
 using namespace boost::asio;
@@ -32,8 +33,7 @@ namespace dive {
          */
         void insert(const ClusterMember& new_member) {
             if (members_.find(new_member.name) != members_.end()) {
-                // TODO(alexyer): Custom exception
-                throw std::runtime_error("Member already exists.");
+                throw MemberListError("Member already exists.");
             }
 
             members_.insert({new_member.name, new_member});

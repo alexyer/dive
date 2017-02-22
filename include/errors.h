@@ -22,6 +22,11 @@ namespace dive {
     private:
         std::string msg;
     };
+
+    class MemberListError : public DiveError {
+    public:
+        MemberListError(const char* msg) : DiveError(msg) {}
+    };
 }
 
 #endif //DIVE_ERRORS_H
