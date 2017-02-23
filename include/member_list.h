@@ -80,7 +80,7 @@ namespace dive {
 
         /***
          * Consider member alive and remove from deadline queue.
-         * @param member 
+         * @param member
          * @return Return true if the member is new. Otherwise false.
          */
         bool consider_alive(ClusterMember& member) {
@@ -90,7 +90,7 @@ namespace dive {
             probe_deadline_timer_->cancel();
 
             if (members_.find(member.name) == members_.end()) {
-                new_member = false;
+                new_member = true;
                 BOOST_LOG_TRIVIAL(info) << "New member: " << member.name;
                 members_.insert({member.name, member});
             }

@@ -12,6 +12,7 @@
 #include "../include/dive.h"
 #include "../include/member_factory.h"
 #include "../include/dive_message_factory.h"
+#include "../include/gossip_factory.h"
 
 using namespace boost::asio;
 using namespace boost::posix_time;
@@ -139,7 +140,18 @@ void Dive::piggyback_gossips(DiveMessage& msg) {
 }
 
 void Dive::handle_gossip_alive(const Gossip& gsp) {
-    ip::address_v4 ip(gsp.member().ip());
-    auto member = ClusterMember(ip.to_string(), gsp.member().port());
-    member_list_.consider_alive(member);
+    auto gsp_member = gsp.member();
+    ip::address_v4 ip(gsp_member.ip());
+    auto cluster_member = ClusterMember(ip.to_string(), gsp_member.port());
+
+    // We don't want to hear gossip about ourselves.
+    if (config_.name != cluster_member.name) {
+        auto new_member = member_list_.consider_alive(cluster_member);
+
+        // We have a new member. Spread the news to the others.
+        if (new_member) {
+            auto gossip = GossipFactory::get_alive_gossip(&gsp_member);
+            queue_.enqueue_gossip(gossip);
+        }
+    }
 }
