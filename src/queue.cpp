@@ -8,7 +8,7 @@ using namespace dive;
 
 Queue::Queue(unsigned int retransmit_multiplier) : retransmit_multiplier_(retransmit_multiplier) {}
 
-unsigned int Queue::retransmit_limit(unsigned int number_of_nodes) {
+unsigned int Queue::retransmit_limit(size_t number_of_nodes) {
     return retransmit_multiplier_ * (unsigned int)std::ceil(std::log10(number_of_nodes + 1));
 }
 
@@ -47,4 +47,9 @@ unsigned long Queue::size() {
 
 void Queue::rebuild() {
     std::make_heap(queue_.begin(), queue_.end());
+}
+
+void Queue::pop() {
+    queue_.pop_back();
+    rebuild();
 }

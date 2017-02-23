@@ -134,7 +134,12 @@ void Dive::piggyback_gossips(DiveMessage& msg) {
             auto& gossip = queue_.get_gossip();
             msg.add_gossips()->CopyFrom(*gossip.gsp);
             ++gossip.retransmitted_count;
-            queue_.rebuild();
+
+            if (gossip.retransmitted_count > queue_.retransmit_limit(member_list_.size())) {
+                queue_.pop();
+            } else {
+                queue_.rebuild();
+            }
         }
     }
 }

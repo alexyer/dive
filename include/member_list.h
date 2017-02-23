@@ -108,6 +108,10 @@ namespace dive {
             return members_.empty();
         }
 
+        size_t size() const {
+            return members_.size();
+        }
+
     private:
         struct ProbeDeadline {
             boost::posix_time::ptime expiration_time;

@@ -30,8 +30,14 @@ namespace dive {
          */
         void rebuild();
         QueuedGossip& get_gossip();
-        unsigned int retransmit_limit(unsigned int);
+        unsigned int retransmit_limit(size_t);
         unsigned long size();
+
+        /***
+         * Pop gossip and rebuild queue.
+         */
+        void pop();
+
     private:
         unsigned int retransmit_multiplier_;
 

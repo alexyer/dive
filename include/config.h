@@ -28,7 +28,7 @@ namespace dive {
 
         config(std::string host, unsigned short port, unsigned int probe_interval = 200,
                unsigned int probe_timeout = 300,
-               unsigned int retransmit_multiplier = 2, unsigned int gossip_interval = 200,
+               unsigned int retransmit_multiplier = 16, unsigned int gossip_interval = 200,
                unsigned int gossip_batch_count = 5)
                 : host(host), port(port), probe_interval(probe_interval), probe_timeout(probe_timeout),
                   retransmit_multiplier(retransmit_multiplier), gossip_interval(gossip_interval),
@@ -39,7 +39,7 @@ namespace dive {
         };
 
         config(std::string host, unsigned short port, std::string name, unsigned int probe_interval = 200,
-               unsigned int probe_timeout = 300, unsigned int retransmit_multiplier = 2,
+               unsigned int probe_timeout = 300, unsigned int retransmit_multiplier = 16,
                unsigned int gossip_interval = 200,
                unsigned int gossip_batch_count = 5)
                 : host{host}, port{port}, name{name}, probe_interval{probe_interval}, probe_timeout{probe_timeout},
