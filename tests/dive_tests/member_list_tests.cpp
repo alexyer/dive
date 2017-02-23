@@ -14,12 +14,12 @@ public:
     };
 protected:
     io_service io_service_;
-    dive::MemberList<offset_timer> member_list_;
+    dive::BasicMemberList<offset_timer> member_list_;
 };
 
 TEST(MemberList, InsertMember) {
     io_service io_service;
-    dive::MemberList<> member_list(io_service, 200);
+    dive::MemberList member_list(io_service, 200);
     auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);
@@ -33,7 +33,7 @@ TEST(MemberList, InsertMember) {
 
 TEST(MemberList, InsertExistingMember) {
     io_service io_service;
-    dive::MemberList<> member_list(io_service, 200);
+    dive::MemberList member_list(io_service, 200);
     auto member = dive::ClusterMember("test-name", "0.0.0.0", 13);
 
     member_list.insert(member);

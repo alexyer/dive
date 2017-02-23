@@ -21,10 +21,10 @@ namespace dive {
      * TODO(alexyer): proper doc.
      * Membership management.
      */
-    template<typename TimerType = deadline_timer>
-    class MemberList {
+    template<typename TimerType>
+    class BasicMemberList {
     public:
-        MemberList(io_service& io_service, unsigned int probe_timeout)
+        BasicMemberList(io_service& io_service, unsigned int probe_timeout)
                 : probe_timeout_{probe_timeout}, timer_cancelled_{false} {
             probe_deadline_timer_ = std::make_unique<TimerType>(io_service);
         }
@@ -171,7 +171,7 @@ namespace dive {
 
         void restart_deadline_timer() {
             probe_deadline_timer_->expires_at(probing_members_.front().expiration_time);
-            probe_deadline_timer_->async_wait(boost::bind(&MemberList::handle_probe_deadline, this));
+            probe_deadline_timer_->async_wait(boost::bind(&BasicMemberList::handle_probe_deadline, this));
         }
 
         void remove_member_from_probing(std::string name) {
@@ -181,6 +181,8 @@ namespace dive {
                     }), probing_members_.end());
         }
     };
+
+    typedef BasicMemberList<deadline_timer> MemberList;
 }
 
 #endif //DIVE_MEMBER_LIST_H
