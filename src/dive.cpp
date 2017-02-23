@@ -101,6 +101,16 @@ void Dive::rpc_receive_cb(std::array<char, 128> buffer, udp::endpoint remote_end
 void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
     read_gossips(msg);
 
+    if (!member_list_.exists(utils::format_address(remote_endpoint.address().to_string(), remote_endpoint.port()))) {
+        // Unknown member is pinging us. Add it to member list.
+        auto new_member = ClusterMember(remote_endpoint.address().to_string(), remote_endpoint.port());
+        member_list_.insert(new_member);
+
+        auto gossip = GossipFactory::get_alive_gossip(
+                &MemberFactory::get_member(remote_endpoint.address().to_string(), remote_endpoint.port()));
+        queue_.enqueue_gossip(gossip);
+    }
+
     auto destination = std::make_unique<Member>(
             MemberFactory::get_member(remote_endpoint.address().to_string(), remote_endpoint.port()));
     auto ack_msg = DiveMessageFactory::get_ack_message(destination.get());

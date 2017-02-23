@@ -29,6 +29,12 @@ namespace dive {
 
             return ss.str();
         }
+
+        inline std::string format_address(std::string host, unsigned long port) {
+            std::stringstream ss;
+            ss << host << ":" << port;
+            return ss.str();
+        }
     }
 }
 
