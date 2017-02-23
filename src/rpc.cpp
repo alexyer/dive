@@ -4,11 +4,12 @@
 #include "../include/rpc.h"
 
 using namespace dive;
+using namespace boost::asio;
 using boost::asio::ip::udp;
 using namespace boost::posix_time;
 
 RPC::RPC(const config &conf, io_service &io_service, receive_handler handler)
-        : socket_(io_service, udp::endpoint(udp::v4(), conf.port)),
+        : socket_(io_service, udp::endpoint(ip::address::from_string(conf.host), conf.port)),
         // Use the smallest interval to empty queue faster
           send_probe_period_(conf.probe_interval < conf.gossip_interval ? conf.probe_interval : conf.gossip_interval),
           receive_handler_cb_(handler) {

@@ -108,7 +108,8 @@ void Dive::handle_ping(const DiveMessage& msg, udp::endpoint remote_endpoint) {
 }
 
 void Dive::handle_ack(const DiveMessage& msg, udp::endpoint remote_endpoint) {
-    member_list_.consider_alive(utils::remote_endpoint2str(remote_endpoint));
+    auto member = ClusterMember(remote_endpoint.address().to_string(), remote_endpoint.port());
+    member_list_.consider_alive(member);
     read_gossips(msg);
 }
 

@@ -66,7 +66,7 @@ TEST_F(MemberListTest, ConsiderAlive) {
     offset_time_traits::set_now(offset_time_traits::now() + milliseconds(1));
     io_service_.poll();
 
-    member_list_.consider_alive("one");
+    member_list_.consider_alive(member);
     offset_time_traits::set_now(offset_time_traits::now() + seconds(1));
     io_service_.poll();
 

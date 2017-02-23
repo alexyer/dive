@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
             ("help", "produce help message")
             ("command", po::value<std::string>(&command), "command to execute")
             ("subargs", po::value<std::vector<std::string> >(), "Arguments for command")
-            ("host", po::value<std::string>(&host)->default_value("0.0.0.0"), "Dive server host. Default: 0.0.0.0")
+            ("host", po::value<std::string>(&host)->default_value("127.0.0.1"), "Dive server host. Default: 127.0.0.1")
             ("port", po::value<u_short>(&port)->default_value(6869), "Dive server port. Default: 6869");
 
     po::positional_options_description pos;

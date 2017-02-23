@@ -80,25 +80,17 @@ namespace dive {
 
         /***
          * Consider member alive and remove from deadline queue.
-         * @param name
+         * @param member 
+         * @return Return true if the member is new. Otherwise false.
          */
-        // TODO(alexyer): Hacky. Probably it's better to remove this method.
-        void consider_alive(std::string name) {
-            timer_cancelled_ = true;
-            probe_deadline_timer_->cancel();
+        bool consider_alive(ClusterMember& member) {
+            auto new_member = false;
 
-            remove_member_from_probing(name);
-
-            if (!probing_members_.empty()) {
-                restart_deadline_timer();
-            }
-        }
-
-        void consider_alive(ClusterMember& member) {
             timer_cancelled_ = true;
             probe_deadline_timer_->cancel();
 
             if (members_.find(member.name) == members_.end()) {
+                new_member = false;
                 BOOST_LOG_TRIVIAL(info) << "New member: " << member.name;
                 members_.insert({member.name, member});
             }
@@ -108,6 +100,8 @@ namespace dive {
             if (!probing_members_.empty()) {
                 restart_deadline_timer();
             }
+
+            return new_member;
         }
 
         bool empty() const {
