@@ -30,6 +30,15 @@ namespace dive {
         }
 
         /**
+         * Check if member exists.
+         * @param name Member name.
+         * @return True if member exists otherwise false.
+         */
+        bool exists(std::string name) const {
+            return members_.find(name) != members_.end();
+        }
+
+        /**
          * Insert new member.
          */
         void insert(const ClusterMember& new_member) {

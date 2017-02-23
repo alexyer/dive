@@ -83,3 +83,11 @@ TEST_F(MemberListTest, ConsiderAliveNew) {
 
     ASSERT_NO_THROW(member_list_.get("0.0.0.0:13"));
 }
+
+TEST_F(MemberListTest, Exists) {
+    auto member = dive::ClusterMember("0.0.0.0", 13);
+    member_list_.insert(member);
+    
+    ASSERT_TRUE(member_list_.exists("0.0.0.0:13"));
+    ASSERT_FALSE(member_list_.exists("unknown-member"));
+}
