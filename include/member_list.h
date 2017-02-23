@@ -25,7 +25,7 @@ namespace dive {
     class MemberList {
     public:
         MemberList(io_service& io_service, unsigned int probe_timeout)
-                : probe_timeout_{probe_timeout} {
+                : probe_timeout_{probe_timeout}, timer_cancelled_{false} {
             probe_deadline_timer_ = std::make_unique<TimerType>(io_service);
         }
 
@@ -82,8 +82,9 @@ namespace dive {
          * Consider member alive and remove from deadline queue.
          * @param name
          */
-         // TODO(alexyer): Hacky. Probably it's better to remove this method.
+        // TODO(alexyer): Hacky. Probably it's better to remove this method.
         void consider_alive(std::string name) {
+            timer_cancelled_ = true;
             probe_deadline_timer_->cancel();
 
             remove_member_from_probing(name);
@@ -94,6 +95,7 @@ namespace dive {
         }
 
         void consider_alive(ClusterMember& member) {
+            timer_cancelled_ = true;
             probe_deadline_timer_->cancel();
 
             if (members_.find(member.name) == members_.end()) {
@@ -124,6 +126,7 @@ namespace dive {
         // TODO(alexyer): update docs after implementing failure detector.
         /// Time in milliseconds before member considered dead.
         unsigned int probe_timeout_;
+        bool timer_cancelled_;
 
         std::unique_ptr<TimerType> probe_deadline_timer_;
         /// List of members waiting for ACK response.
@@ -132,6 +135,7 @@ namespace dive {
         std::unordered_map<std::string, ClusterMember> members_;
 
         void enqueue_probe_deadline(const ClusterMember& member) {
+            timer_cancelled_ = false;
             auto timer_expired = probe_deadline_timer_->expires_at() < microsec_clock::local_time();
             auto restart_timer = probing_members_.empty() || timer_expired;
 
@@ -146,8 +150,7 @@ namespace dive {
 
         void handle_probe_deadline() {
             // TODO(alexyer): Ugly. Encapsulate cancellation logic into timer wrapper.
-            auto timer_cancelled = probe_deadline_timer_->expires_at() > microsec_clock::local_time();
-            if (probing_members_.empty() || timer_cancelled) {
+            if (probing_members_.empty() || timer_cancelled_) {
                 return;
             }
 
