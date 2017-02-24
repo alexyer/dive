@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost 1.58.0 COMPONENTS program_options system log date_time REQUIRED)
 
-file(GLOB SOURCE_FILES "./src/*.cpp" "./include/*.h")
+file(GLOB SOURCE_FILES "./src/*.cpp" "./include/*.h" "./lib/**/*.h")
 set(CMAKE_CXX_FLAGS "-pthread")
 
 add_subdirectory(lib/proto)

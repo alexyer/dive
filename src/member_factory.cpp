@@ -14,3 +14,7 @@ Member& MemberFactory::get_member(unsigned long ip, unsigned int port) {
 Member& MemberFactory::get_member(std::string ip, unsigned int port) {
     return get_member(utils::ip_str2ulong(ip), port);
 }
+
+Member& MemberFactory::get_member(const ClusterMember& cluster_member) {
+    return get_member(cluster_member.host, cluster_member.port);
+}

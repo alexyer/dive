@@ -63,8 +63,7 @@ void Dive::handle_probe() {
 //        BOOST_LOG_TRIVIAL(debug) << "Probing node: " << probe_member.name;
 
         auto dst_cluster_member = member_list_.probe_random();
-        auto destination = std::make_unique<Member>(
-                MemberFactory::get_member(dst_cluster_member.host, dst_cluster_member.port));
+        auto destination = std::make_unique<Member>(MemberFactory::get_member(dst_cluster_member));
         auto msg = DiveMessageFactory::get_ping_message(destination.get());
         piggyback_gossips(msg);
         rpc_.enqueue_send_message(msg);

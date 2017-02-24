@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include "../lib/utils/utils.h"
+#include "../lib/lamport_clock/lamport_clock.h"
 
 namespace dive {
     struct ClusterMember {
